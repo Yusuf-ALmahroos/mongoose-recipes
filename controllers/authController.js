@@ -26,7 +26,7 @@ async function registerUser (req, res)
       recipes: []
     })
 
-    res.send(`thanks for signing up ${req.body.first}`);
+    res.render('./auth/thanks.ejs', { user })
   } catch (error) {
     console.log("error in registering user", error.message);
   }
@@ -51,7 +51,7 @@ async function signInUser (req, res)
       _id: user._id
     }
 
-    res.send(`thanks for signing in,  ${user.first}`)
+    res.redirect(`/users/${user._id}`)
   } catch (error) {
     console.error('An error has occurred signing in a user!', error.message)
   }
@@ -84,7 +84,7 @@ async function updatePassword(req, res)
     const hashedPassword = bcrypt.hashSync(req.body.newPassword, 12)
     user.password = hashedPassword;
     await user.save();
-    res.send('Your password has been updated');
+    res.render('./auth/confirm.ejs', { user })
   } catch (error) {
     console.error("An error has occurred updating a user's password!", error.message)
   }
