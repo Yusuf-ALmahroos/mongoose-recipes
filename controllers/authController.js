@@ -67,8 +67,32 @@ function signOutUser(req, res)
   }
 }
 
+async function updatePassword(req, res)
+{
+  try {
+    const user = await User.findById(req.params.id);
+    if(!user)
+    {
+      res.send('No user with this ID')
+    }
+
+    if(req.body.newPassword !== req.body.confirmPassword) 
+    {
+      return res.send('Password and Confirm Password must match')
+    }
+
+    const hashedPassword = bcrypt.hashSync(req.body.newPassword, 12)
+    user.password = hashedPassword;
+    await user.save();
+    res.send('Your password has been updated');
+  } catch (error) {
+    console.error("An error has occurred updating a user's password!", error.message)
+  }
+}
+
 module.exports = {
   registerUser,
   signInUser,
-  signOutUser
+  signOutUser,
+  updatePassword
 }
